@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SNAKE</title>
+
+    <style>
+      .board {
+        margin: 50px auto;
+        width: 400px;
+        height: 200px;
+        background-color: black;
+        position: relative;
+      }
+
+      .snake-head {
+        width: 20px;
+        height: 20px;
+        background-image: url(/images/image.png);
+        background-repeat: round;
+        position: absolute;
+        top: 40px;
+        left: 80px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="board">
+      <div class="snake-head" id="snakeHead"></div>
+    </div>
+
+    <div class="buttons">
+      <button onclick="changeDirection('up')">Up</button>
+      <button onclick="changeDirection('down')">Down</button>
+      <button onclick="changeDirection('right')">Right</button>
+      <button onclick="changeDirection('left')">Left</button>
+    </div>
+
+    <script>
+      let headX = 80;
+      let headY = 40;
+      let direction = "left";
+
+      function changeDirection(newDirection) {
+        direction = newDirection;
+      }
+
+      function goRight() {
+        headX = headX + 20;
+        if (headX === 400) {
+          headX = 0;
+        }
+      }
+
+      function goLeft() {
+        headX = headX - 20;
+        if (headX < 0) {
+          headX = 380;
+        }
+      }
+
+      function goDown() {
+        headY = headY + 20;
+        if (headY === 200) {
+          headY = 0;
+        }
+      }
+
+      function goUp() {
+        headY = headY - 20;
+        if (headY < 0) {
+          headY = 180;
+        }
+      }
+
+      function render() {
+        document.getElementById("snakeHead").style.left = `${headX}px`;
+        document.getElementById("snakeHead").style.top = `${headY}px`;
+      }
+
+      setInterval(() => {
+        if (direction === "right") {
+          goRight();
+        } else if (direction === "left") {
+          goLeft();
+        } else if (direction === "up") {
+          goUp();
+        } else if (direction === "down") {
+          goDown();
+        }
+
+        render();
+      }, 500);
+
+      addEventListener("keydown", (event) => {
+        if (event.key === "ArrowDown") {
+          changeDirection("down");
+        } else if (event.key === "ArrowUp") {
+          changeDirection("up");
+        } else if (event.key === "ArrowLeft") {
+          changeDirection("left");
+        } else if (event.key === "ArrowRight") {
+          changeDirection("right");
+        }
+      });
+    </script>
+  </body>
+</html>
