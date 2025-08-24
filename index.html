@@ -26,7 +26,7 @@
       }
 
       .food {
-        background-image: url(/images/code\ icon.jpeg);
+        background-color: azure;
         background-repeat: round;
         border-radius: 50%;
         position: absolute;
@@ -38,6 +38,8 @@
       <div id="food" class="food"></div>
       <div id="tails"></div>
     </div>
+
+    <div class="" id="score"></div>
 
     <div class="buttons">
       <button onclick="changeDirection('up')">Up</button>
@@ -51,33 +53,58 @@
       const unit = 40;
       const board = { height: 20, width: 30 };
 
-      const head = { x: 4, y: 5 };
+      let head = { x: 4, y: 5 };
 
-      const tails = [
+      let tails = [
         { x: 2, y: 5 },
         { x: 3, y: 5 },
         { x: 4, y: 5 },
       ];
 
-      const food = {
-        x: 10,
-        y: 9,
+      let food = {
+        x: 0,
+        y: 0,
       };
 
       let direction = "right";
 
+      const foodElement = document.getElementById("food");
+      const boardElement = document.getElementById("board");
+      const tailsElement = document.getElementById("tails");
+
+      function reset() {
+        head = { x: 4, y: 5 };
+
+        tails = [
+          { x: 2, y: 5 },
+          { x: 3, y: 5 },
+          { x: 4, y: 5 },
+        ];
+
+        food = {
+          x: 0,
+          y: 0,
+        };
+        direction = "right";
+        score = 0;
+        speed = 1;
+      }
+
+      let score = 0;
+      let speed = 1;
+
       function init() {
         const boardWidth = board.width * unit;
-        document.getElementById("board").style.width = `${boardWidth}px`;
+        boardElement.style.width = `${boardWidth}px`;
         const boardHeight = board.height * unit;
-        document.getElementById("board").style.height = `${boardHeight}px`;
-
-        const foodElement = document.getElementById("food");
+        boardElement.style.height = `${boardHeight}px`;
 
         foodElement.style.height = `${unit}px`;
         foodElement.style.width = `${unit}px`;
-        foodElement.style.top = `${food.y * unit}px`;
-        foodElement.style.left = `${food.x * unit}px`;
+
+        generateNewFood();
+
+        document.getElementById(`speed`).innerText = `speed: ${speed}`;
       }
 
       init();
@@ -129,7 +156,16 @@
           )
           .join("");
 
-        document.getElementById("tails").innerHTML = tailsHtml;
+        tailsElement.innerHTML = tailsHtml;
+      }
+
+      function generateNewFood() {
+        food = {
+          x: Math.floor(Math.random() * board.width),
+          y: Math.floor(Math.random() * board.height),
+        };
+        foodElement.style.top = `${food.y * unit}px`;
+        foodElement.style.left = `${food.x * unit}px`;
       }
 
       setInterval(() => {
@@ -143,29 +179,55 @@
           goDown();
         }
 
+        if (direction === "right") {
+        }
+
         tails.push({ x: head.x, y: head.y });
         tails.shift();
 
+        for (let i = 0; i < tails.length - 1; i++) {
+          if (head.x === tails[i].x && head.y === tails[i].y) {
+            alert("GAME OVER");
+
+            reset();
+
+            generateNewFood();
+          }
+        }
+
+        // eating food
         if (head.x === food.x && head.y === food.y) {
+          counter++;
+
+          if (counter === 3) {
+            speed++;
+            document.getElementById(`speed`).innerText = `Speed: ${speed}`;
+            counter = 0;
+          }
+          score += 10 * speed;
+
+          document.getElementById(
+            "score"
+          ).innerText = `your score is: ${score}`;
+
           tails.push({ x: head.x, y: head.y });
           generateNewFood();
         }
 
         render();
-      }, 500);
+      }, 500 - speed + 50);
 
       addEventListener("keydown", (event) => {
-        if (event.key === "ArrowDown") {
-          changeDirection("down");
-        } else if (event.key === "ArrowUp") {
-          changeDirection("up");
-        } else if (event.key === "ArrowLeft") {
-          changeDirection("left");
-        } else if (event.key === "ArrowRight") {
-          changeDirection("right");
+        if (event.key === "ArrowRight" && direction !== "left") {
+          direction = "right";
+        } else if (event.key === "ArrowLeft" && direction !== "right") {
+          direction = "left";
+        } else if (event.key === "ArrowUp" && direction !== "down") {
+          direction = "up";
+        } else if (event.key === "ArrowDown" && direction !== "up") {
+          direction = "down";
         }
       });
     </script>
-    
   </body>
 </html>
